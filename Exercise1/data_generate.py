@@ -17,12 +17,13 @@ import numpy as np
 
 
 # ===================== 参数区（按需修改） =====================
-D = 3                # 特征维度 (>=1)
+D = 3                # 特征维度 (>=1) 设置为1 时用于作为linear regression的参数，大于1时作为multi-linear regression的参数
+                     # 修改D时也要修改下面W当中数字的个数，例如修改为[[1.0]] (当D=1)
 N_TRAIN = 300        # 训练样本数
 N_TEST = 200         # 测试样本数
 
 # 线性真值： y = X @ W + B + 噪声
-W = [[1.0, 0.5, -0.8]]             # 若为 None，则随机生成长度为 D 的权重；否则给出长度为 D 的列表/数组，如 [1.0, 0.5, -0.8]
+W = [[1.0,0.5,-0.8]]             # 若为 None，则随机生成长度为 D 的权重；否则给出长度为 D 的列表/数组，如 [1.0, 0.5, -0.8]
 B = 1              # 偏置
 
 # 自变量取值范围（各维独立均匀采样）
@@ -63,7 +64,9 @@ def main() -> None:
     if W is None:
         w = rng.uniform(0.5, 1.5, size=D)  # 适中的随机权重
     else:
-        w = np.asarray(W, dtype=np.float64).reshape(-1)
+        w = np.asarray(W, dtype=np.float64).reshape(-1) # reshape()用于改变数组的形状
+        # reshape()只能改变形状但是不改变内容
+        # -1表示自动计算该维度的大小，这里让W变成形状(D,)的一维数组
         if w.shape[0] != D:
             raise ValueError(f"Length of W must be {D}, got {w.shape[0]}.")
 
@@ -80,7 +83,7 @@ def main() -> None:
     testy_path = os.path.join(OUT_DIR, "test_y.txt")
 
     # 训练数据：拼接 [X, y]
-    train_mat = np.concatenate([X_tr, y_tr.reshape(-1, 1)], axis=1)
+    train_mat = np.concatenate([X_tr, y_tr.reshape(-1, 1)], axis=1) # 这里让y_tr变成(N,1)的二维数组
     np.savetxt(train_path, train_mat, fmt=FMT, delimiter=" ")
 
     # 测试数据：X 与 y 分开保存
