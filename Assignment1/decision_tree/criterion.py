@@ -51,7 +51,7 @@ def __info_gain(y, l_y, r_y):
     # l_y and r_y                                                             #
     ###########################################################################
     # *****START OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-
+    # 结点分裂之后熵是否增加/减少
     # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
     return info_gain
