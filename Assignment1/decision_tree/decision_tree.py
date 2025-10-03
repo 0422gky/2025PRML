@@ -155,9 +155,11 @@ class DecisionTreeClassifier(object):
         best_split = None
 
         k = self._get_n_feats(self.max_features, n_feats)
+        # get n feats当中的k是通过max_features对于现在的feature取sqrt()或者log2()算出来的
         if self.random_state is not None:
             np.random.seed(self.random_state)
         cols = np.random.choice(range(n_feats), k, replace=False)
+        # 直接从这里面选出k个feat，作为等会决策树分裂的threshold
 
         n_sample = X.shape[0]
 
@@ -187,6 +189,7 @@ class DecisionTreeClassifier(object):
 
                     score = self._score_func(y, l_y, r_y)
                     if score > max_score:
+                        # 如果score有更新，就按照threshold的方法分裂
                         l_Xy = X[l, :]
                         r_Xy = X[r, :]
                         best_split = {"feat_idx": c, "threshold": thr,
@@ -245,9 +248,10 @@ class DecisionTreeClassifier(object):
 
         if node.value is not None:
             return node.value
-
+            # value: class id
         feat = x[node.feat_idx]
         node = node.left if feat < node.threshold else node.right
+        # 递归计算结点，左边是小于threshold的，右边是大于等于threshold的
         return self._predict_sample(x, node=node)
 
     @staticmethod
